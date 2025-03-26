@@ -1,0 +1,66 @@
+<div class="auth-container">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h2>{{ isSignIn() ? 'Welcome Back!' : 'Create an Account' }}</h2>
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+        <!-- Email Input -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" required>
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-error *ngIf="authForm.get('email')?.invalid && authForm.get('email')?.touched">
+            Please enter a valid email
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Password Input -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" required>
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="authForm.get('password')?.invalid && authForm.get('password')?.touched">
+            Password must be at least 6 characters
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Confirm Password (Only for Sign Up) -->
+        <mat-form-field *ngIf="!isSignIn()" appearance="outline" class="full-width">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="confirmPassword" required>
+          <mat-error *ngIf="authForm.get('confirmPassword')?.invalid && authForm.get('confirmPassword')?.touched">
+            Passwords must match
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Submit Button -->
+        <button mat-raised-button color="primary" class="full-width submit-btn" type="submit" [disabled]="authForm.invalid">
+          {{ isSignIn() ? 'Sign In' : 'Sign Up' }}
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <!-- Google Sign In -->
+      <button mat-stroked-button class="google-btn full-width">
+        <mat-icon>login</mat-icon>
+        Continue with Google
+      </button>
+    </mat-card-content>
+
+    <mat-card-actions class="switch-action">
+      <button mat-button color="accent" (click)="toggleAuthMode()">
+        {{ isSignIn() ? 'Create an account' : 'Already have an account? Sign In' }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
