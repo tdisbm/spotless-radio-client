@@ -1,15 +1,25 @@
 <div class="landing-container">
-  <button class="logout-btn" (click)="logout()">Logout</button>
+  <!-- top bar -->
+  <div class="top-bar">
+    <div class="now-playing">
+      <span class="play-icon">▶</span>
+      <span class="song-info">Artist - Song</span>
+    </div>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
 
+  <!-- stuff inside -->
   <div class="center-content">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <h1>Welcome to <br> SPOTLESS RADIO</h1>
+    <h1>Welcome to <br> SPOTLESS <span>RADIO</span></h1>
     <button class="play-btn" (click)="play()">
-      ▶
+      <span class="play-icon">▶</span>
     </button>
   </div>
+
+  <!-- feedback box -->
   <div class="feedback-box">
-    <textarea placeholder="we need your feedback..."></textarea>
-    <button>send</button>
+    <div class="heart-icon">❤️</div>
+    <textarea [(ngModel)]="feedbackMessage" placeholder="we need your feedback..."></textarea>
+    <button (click)="sendFeedback()">send</button>
   </div>
 </div>

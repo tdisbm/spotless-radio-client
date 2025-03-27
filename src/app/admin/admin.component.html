@@ -1,10 +1,10 @@
 <div class="admin-container">
   <div class="sidebar">
     <button class="sidebar-btn" [routerLink]="['/admin']">MANAGE</button>
-    <button class="sidebar-btn">Music Files</button>
-    <button class="sidebar-btn">Playlist</button>
+    <button class="sidebar-btn" [routerLink]="['/music-files']">Music Files</button>
+    <button class="sidebar-btn" [routerLink]="['/playlist']">Playlist</button>
     <div class="spacer"></div>
-    <button class="sidebar-btn">Feedback</button>
+    <button class="sidebar-btn" [routerLink]="['/feedback']">Feedback</button>
     <button class="logout-btn" (click)="logout()">Logout</button>
   </div>
 

@@ -1,0 +1,54 @@
+<div class="admin-container">
+  <div class="sidebar">
+    <button class="sidebar-btn" [routerLink]="['/admin']">MANAGE</button>
+    <button class="sidebar-btn" [routerLink]="['/music-files']">Music Files</button>
+    <button class="sidebar-btn" [routerLink]="['/playlist']">Playlist</button>
+    <div class="spacer"></div>
+    <button class="sidebar-btn" [routerLink]="['/feedback']">Feedback</button>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+
+  <div class="main-content">
+    <div class="header">
+      <h1 class="spotless">SPOTLESS <span>RADIO</span></h1>
+    </div>
+    <div class="files-header">
+      <h2>Music Files</h2>
+    </div>
+    <div class="files-content">
+      <button class="add-btn" (click)="addFile()">Add New File</button>
+      <table class="music-table">
+        <thead>
+        <tr>
+          <th>Title</th>
+          <th>Artist</th>
+          <th>Duration</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let file of musicFiles">
+          <td>{{ file.title }}</td>
+          <td>{{ file.artist }}</td>
+          <td>{{ file.duration }}</td>
+          <td>
+            <button class="action-btn" (click)="showPlaylistSelector(file)">Add to Playlist</button>
+            <button class="action-btn delete-btn" (click)="deleteFile(file)">Delete</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!-- Selector de playlist -->
+      <div class="playlist-selector" *ngIf="selectedFileForPlaylist">
+        <h3>Add "{{ selectedFileForPlaylist.title }}" to Playlist</h3>
+        <ul>
+          <li *ngFor="let playlist of playlists" (click)="addToPlaylist(selectedFileForPlaylist, playlist)">
+            {{ playlist.name }} ({{ playlist.files.length }} files)
+          </li>
+        </ul>
+        <button class="back-btn" (click)="selectedFileForPlaylist = null">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
