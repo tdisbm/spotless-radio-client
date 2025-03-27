@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,13 +25,13 @@ import { CommonModule } from '@angular/common';
 export class AuthComponent {
   authForm: FormGroup;
   hidePassword = true;
-  isSignIn = signal(true);
+  isSignIn = true;
 
   constructor(private fb: FormBuilder) {
     this.authForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['']
+      confirmPassword: [''] // - at sign in
     });
   }
 
@@ -40,21 +40,25 @@ export class AuthComponent {
 
     const { email, password, confirmPassword } = this.authForm.value;
 
-    if (!this.isSignIn() && password !== confirmPassword) {
+    if (!this.isSignIn && password !== confirmPassword) {
       this.authForm.get('confirmPassword')?.setErrors({ mismatch: true });
       return;
     }
 
-    // logic for backend calls
+    console.log("Form submitted:", { email, password });
+    // backend (API call)
   }
 
   toggleAuthMode() {
-    this.isSignIn.set(!this.isSignIn());
+    this.isSignIn = !this.isSignIn;
 
-    if (this.isSignIn()) {
+    if (this.isSignIn) {
       this.authForm.removeControl('confirmPassword');
     } else {
-      this.authForm.addControl('confirmPassword', this.fb.control('', Validators.required));
+      this.authForm.addControl(
+        'confirmPassword',
+        this.fb.control('', [Validators.required]) // validare
+      );
     }
   }
 }
