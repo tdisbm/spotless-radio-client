@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(to bottom right, #f0f4f8, #d9e2ec);
+  background: linear-gradient(to bottom right, #6a0dad, #6A5ACD);
 }
 
 .auth-card {
@@ -48,17 +48,4 @@
   height: 1px;
   background: #ddd;
   margin: 0 10px;
-}
-
-.google-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: bold;
-}
-
-.google-btn mat-icon {
-  margin-right: 8px;
 }

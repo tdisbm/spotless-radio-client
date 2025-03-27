@@ -1,47 +1,15 @@
-<!-- Navbar -->
-<mat-toolbar color="primary" class="navbar">
-  <span class="logo">MyApp</span>
-  <span class="spacer"></span>
-  <button mat-button>Home</button>
-  <button mat-button>Features</button>
-  <button mat-button>Pricing</button>
-  <button mat-button>About</button>
-  <button mat-raised-button color="accent" routerLink="/auth">Login</button>
-</mat-toolbar>
+<div class="landing-container">
+  <button class="logout-btn" (click)="logout()">Logout</button>
 
-<!-- Hero Section -->
-<div class="hero">
-  <div class="hero-content">
-    <h1>Welcome to MyApp</h1>
-    <p>Your all-in-one platform for productivity and collaboration.</p>
-    <button mat-raised-button color="primary">Get Started</button>
+  <div class="center-content">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <h1>Welcome to <br> SPOTLESS RADIO</h1>
+    <button class="play-btn" (click)="play()">
+      ▶
+    </button>
   </div>
-  <div class="hero-image">
-    <mat-card>
-      <img src="https://via.placeholder.com/400x250" alt="Hero Image">
-    </mat-card>
+  <div class="feedback-box">
+    <textarea placeholder="we need your feedback..."></textarea>
+    <button>send</button>
   </div>
 </div>
-
-<!-- Features Section -->
-<div class="features">
-  <mat-card class="feature-card" *ngFor="let i of [1,2,3]">
-    <mat-card-header>
-      <mat-card-title>Feature {{i}}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <img src="https://via.placeholder.com/150" alt="Feature Image">
-      <p>Short description of feature {{i}}.</p>
-    </mat-card-content>
-  </mat-card>
-</div>
-
-<!-- Footer -->
-<footer class="footer">
-  <p>&copy; 2024 MyApp. All rights reserved.</p>
-  <div class="social-links">
-    <mat-icon>facebook</mat-icon>
-    <mat-icon>twitter</mat-icon>
-    <mat-icon>linkedin</mat-icon>
-  </div>
-</footer>
