@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -7,9 +7,14 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
-  imports: [CommonModule, RouterLink]
+  imports: [CommonModule, RouterLink],
 })
 export class AdminComponent {
+  nowPlaying = {
+    artist: 'Artist',
+    song: 'Song',
+  };
+
   constructor(private router: Router) {}
 
   logout() {

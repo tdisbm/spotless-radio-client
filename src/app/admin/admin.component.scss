@@ -15,10 +15,6 @@
   gap: 15px;
 }
 
-h2 {
-  margin-bottom: 20px;
-}
-
 .sidebar-btn {
   background: none;
   border: none;
@@ -58,20 +54,75 @@ h2 {
 
 .main-content {
   flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 20px;
 }
 
+.centered-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 .header {
-  text-align: left;
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 .spotless {
-  font-size: 36px;
+  font-size: 48px;
   font-weight: bold;
   margin: 0;
+  color: #6a0dad;
 }
 
 .spotless span {
-  font-size: 24px;
+  font-size: 36px;
   font-weight: normal;
+  color: #6A5ACD;
+}
+
+.tables-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.small-table {
+  flex: 1;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.table-header {
+  background: #6a0dad;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.table-content {
+  padding: 15px;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .tables-container {
+    flex-direction: column;
+  }
+  .small-table {
+    margin-bottom: 20px;
+  }
 }
