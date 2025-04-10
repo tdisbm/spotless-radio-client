@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 
 @Component({
   selector: 'app-auth',
@@ -19,13 +20,16 @@ import { CommonModule } from '@angular/common';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    HttpClientModule
   ]
 })
 export class AuthComponent {
   authForm: FormGroup;
   hidePassword = true;
   isSignIn = true;
+
+  private readonly http: HttpClient = inject(HttpClient);
 
   constructor(private fb: FormBuilder) {
     this.authForm = this.fb.group({
@@ -36,13 +40,26 @@ export class AuthComponent {
   }
 
   onSubmit() {
-    if (this.authForm.invalid) return;
+    // if (this.authForm.invalid) return;
 
     const { email, password, confirmPassword } = this.authForm.value;
 
     if (!this.isSignIn && password !== confirmPassword) {
-      this.authForm.get('confirmPassword')?.setErrors({ mismatch: true });
-      return;
+      // Sign up!
+    } else {
+      this.http.post('http://localhost:3000/auth/sign-in', {
+        username: email,
+        password: password
+      }, {
+        responseType: 'text'
+      }).subscribe({
+        next: (authToken) => {
+          console.log(authToken);
+        },
+        error: (b) => {
+          console.log(b, 'err');
+        }
+      });
     }
 
     console.log("Form submitted:", { email, password });
