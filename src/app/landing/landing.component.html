@@ -25,7 +25,7 @@
   <!-- feedback box -->
   <div class="feedback-box">
     <div class="heart-icon">❤️</div>
-    <p *ngIf="errorMessage" style="color: red; text-align: center;">{{ errorMessage }}</p>
+<!--    <p *ngIf="errorMessage" style="color: red; text-align: center;">{{ errorMessage }}</p>-->
     <textarea [(ngModel)]="feedbackMessage" placeholder="we need your feedback..."></textarea>
     <button (click)="sendFeedback()">send</button>
   </div>
