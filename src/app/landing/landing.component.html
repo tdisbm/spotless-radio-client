@@ -2,8 +2,14 @@
   <!-- top bar -->
   <div class="top-bar">
     <div class="now-playing">
-      <span class="play-icon">▶</span>
-      <span class="song-info">Artist - Song</span>
+      <button class="play-btn-small" (click)="toggleStream()">
+        <span class="play-icon">{{ streamStatus === 'Playing' ? '⏸' : '▶' }}</span>
+      </button>
+      <span class="song-info">{{ nowPlaying.artist }} - {{ nowPlaying.song }}</span>
+      <div class="volume-control">
+        <input type="range" [(ngModel)]="volume" min="0" max="100" (input)="adjustVolume()" />
+        <span>{{ volume }}%</span>
+      </div>
     </div>
     <button class="logout-btn" (click)="logout()">Logout</button>
   </div>
@@ -11,14 +17,15 @@
   <!-- stuff inside -->
   <div class="center-content">
     <h1>Welcome to <br> SPOTLESS <span>RADIO</span></h1>
-    <button class="play-btn" (click)="play()">
-      <span class="play-icon">▶</span>
+    <button class="play-btn" (click)="toggleStream()">
+      <span class="play-icon">{{ streamStatus === 'Playing' ? '⏸' : '▶' }}</span>
     </button>
   </div>
 
   <!-- feedback box -->
   <div class="feedback-box">
     <div class="heart-icon">❤️</div>
+    <p *ngIf="errorMessage" style="color: red; text-align: center;">{{ errorMessage }}</p>
     <textarea [(ngModel)]="feedbackMessage" placeholder="we need your feedback..."></textarea>
     <button (click)="sendFeedback()">send</button>
   </div>

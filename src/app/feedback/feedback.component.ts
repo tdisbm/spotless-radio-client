@@ -12,14 +12,28 @@ import { FeedbackService } from '../shared/feedback.service';
 })
 export class FeedbackComponent implements OnInit {
   feedbacks: any[] = [];
+  errorMessage: string | null = null;
 
   constructor(private router: Router, private feedbackService: FeedbackService) {}
 
   ngOnInit() {
-    this.feedbacks = this.feedbackService.getFeedbacks();
+    this.loadFeedbacks();
+  }
+
+  loadFeedbacks() {
+    this.feedbackService.getFeedbacks().subscribe({
+      next: (data) => {
+        this.feedbacks = data;
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to load feedbacks: ' + (err.error?.message || err.message);
+        console.error('Failed to load feedbacks', err);
+      },
+    });
   }
 
   logout() {
+    localStorage.removeItem('token');
     this.router.navigate(['/auth']);
   }
 }

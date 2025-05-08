@@ -1,31 +1,55 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PlaylistService {
-  private playlists = [
-    { name: 'Chill Vibes', files: [{ title: 'Song 1', artist: 'Artist 1', duration: '3:45' }] },
-    { name: 'Workout Mix', files: [{ title: 'Song 2', artist: 'Artist 2', duration: '4:12' }] },
-  ];
+  private apiUrl = 'http://localhost:3000/playlist';
 
-  getPlaylists() {
-    return this.playlists;
+  constructor(private http: HttpClient) {}
+
+  getPlaylists(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/list`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
   }
 
-  addPlaylist(name: string) {
-    this.playlists.push({ name, files: [] });
+  addPlaylist(name: string): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/create`,
+      { name, description: '', coverImage: '', tracks: [] },
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      }
+    );
   }
 
-  deletePlaylist(playlist: any) {
-    this.playlists = this.playlists.filter(p => p !== playlist);
+  deletePlaylist(playlistId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/delete`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      body: { playlistId },
+    });
   }
 
-  addFileToPlaylist(playlist: any, file: any) {
-    playlist.files.push(file);
+  addFileToPlaylist(playlistId: string, fileId: string): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/update`,
+      { id: playlistId, tracks: [{ id: fileId, sortOrder: 0 }] },
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      }
+    );
   }
 
-  removeFileFromPlaylist(playlist: any, file: any) {
-    playlist.files = playlist.files.filter((f: any) => f !== file);
+  removeFileFromPlaylist(playlistId: string, fileId: string): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/update`,
+      { id: playlistId, tracks: [] },
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      }
+    );
   }
 }

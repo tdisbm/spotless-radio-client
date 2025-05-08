@@ -30,9 +30,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px; /* Reducem padding-ul general */
+  padding: 0 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  box-sizing: border-box; /* Asigurăm că padding-ul nu afectează lățimea totală */
+  box-sizing: border-box;
 }
 
 .now-playing {
@@ -41,15 +41,41 @@
   color: white;
   font-family: 'Poppins', sans-serif;
   font-size: 1.2rem;
-  margin-left: 20px; /* Adăugăm un mic spațiu pe stânga */
+  margin-left: 20px;
+  gap: 10px;
 
-  .play-icon {
-    font-size: 1.5rem;
-    margin-right: 10px;
+  .play-btn-small {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+
+    .play-icon {
+      font-size: 1.5rem;
+      color: white;
+    }
   }
 
   .song-info {
     font-weight: 500;
+  }
+
+  .volume-control {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    input[type="range"] {
+      width: 100px;
+      margin: 0 5px;
+    }
+
+    span {
+      font-size: 0.9rem;
+      color: white;
+    }
   }
 }
 

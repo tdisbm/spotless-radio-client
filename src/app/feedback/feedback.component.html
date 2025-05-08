@@ -16,6 +16,7 @@
       <h2>Feedback</h2>
     </div>
     <div class="files-content">
+      <p *ngIf="errorMessage" style="color: red; text-align: center;">{{ errorMessage }}</p>
       <table class="feedback-table">
         <thead>
         <tr>

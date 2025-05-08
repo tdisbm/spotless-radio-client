@@ -16,6 +16,7 @@
       <h2>Playlists</h2>
     </div>
     <div class="files-content">
+      <p *ngIf="errorMessage" style="color: red; text-align: center;">{{ errorMessage }}</p>
       <button class="add-btn" (click)="addPlaylist()">Add New Playlist</button>
 
       <!-- playlist table -->
@@ -30,7 +31,7 @@
         <tbody>
         <tr *ngFor="let playlist of playlists" (click)="viewPlaylist(playlist)" class="playlist-row">
           <td>{{ playlist.name }}</td>
-          <td>{{ playlist.files.length }}</td>
+          <td>{{ playlist.tracks?.length || 0 }}</td>
           <td>
             <button class="action-btn delete-btn" (click)="deletePlaylist(playlist); $event.stopPropagation()">Delete</button>
           </td>
@@ -46,19 +47,15 @@
         <table class="music-table">
           <thead>
           <tr>
-            <th>Title</th>
-            <th>Artist</th>
-            <th>Duration</th>
+            <th>Name</th>
             <th>Actions</th>
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let file of selectedPlaylist.files">
-            <td>{{ file.title }}</td>
-            <td>{{ file.artist }}</td>
-            <td>{{ file.duration }}</td>
+          <tr *ngFor="let track of selectedPlaylist.tracks">
+            <td>{{ track.name }}</td>
             <td>
-              <button class="action-btn delete-btn" (click)="removeFileFromPlaylist(file)">Remove</button>
+              <button class="action-btn delete-btn" (click)="removeFileFromPlaylist(track)">Remove</button>
             </td>
           </tr>
           </tbody>

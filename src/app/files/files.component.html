@@ -16,21 +16,18 @@
       <h2>Music Files</h2>
     </div>
     <div class="files-content">
+      <p *ngIf="errorMessage" style="color: red; text-align: center;">{{ errorMessage }}</p>
       <button class="add-btn" (click)="addFile()">Add New File</button>
       <table class="music-table">
         <thead>
         <tr>
-          <th>Title</th>
-          <th>Artist</th>
-          <th>Duration</th>
+          <th>Name</th>
           <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let file of musicFiles">
-          <td>{{ file.title }}</td>
-          <td>{{ file.artist }}</td>
-          <td>{{ file.duration }}</td>
+          <td>{{ file.name }}</td>
           <td>
             <button class="action-btn" (click)="showPlaylistSelector(file)">Add to Playlist</button>
             <button class="action-btn delete-btn" (click)="deleteFile(file)">Delete</button>
@@ -41,10 +38,10 @@
 
       <!-- Selector de playlist -->
       <div class="playlist-selector" *ngIf="selectedFileForPlaylist">
-        <h3>Add "{{ selectedFileForPlaylist.title }}" to Playlist</h3>
+        <h3>Add "{{ selectedFileForPlaylist.name }}" to Playlist</h3>
         <ul>
           <li *ngFor="let playlist of playlists" (click)="addToPlaylist(selectedFileForPlaylist, playlist)">
-            {{ playlist.name }} ({{ playlist.files.length }} files)
+            {{ playlist.name }} ({{ playlist.tracks?.length || 0 }} files)
           </li>
         </ul>
         <button class="back-btn" (click)="selectedFileForPlaylist = null">Cancel</button>

@@ -88,16 +88,16 @@
 .tables-container {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 14px;
   width: 100%;
-  max-width: 900px;
+  max-width: 1070px;
 }
 
 .small-table {
   flex: 1;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 7px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
@@ -111,11 +111,17 @@
 }
 
 .table-content {
-  padding: 15px;
+  padding: 17px;
   text-align: center;
+  align-items: center;
   font-family: 'Poppins', sans-serif;
   font-size: 1rem;
   color: #333;
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
@@ -125,4 +131,73 @@
   .small-table {
     margin-bottom: 20px;
   }
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+}
+
+.small-table input, .small-table select {
+  display: block;
+  margin: 5px 0;
+  width: 100%;
+  padding: 5px;
+}
+
+.action-btn {
+  margin: 5px;
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+
+  &.danger {
+    background-color: #f44336;
+  }
+
+  &:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 30px;
+}
+
+.small-table input, .small-table select {
+  display: block;
+  margin: 5px 0;
+  width: 100%;
+  padding: 5px;
+}
+
+.action-btn {
+  margin: 5px;
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+
+  &.danger {
+    background-color: #f44336;
+  }
+
+  &:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+}
+
+.table-content a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.table-content a:hover {
+  text-decoration: underline;
 }

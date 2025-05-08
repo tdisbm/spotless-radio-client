@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FileService } from '../shared/file.service';
 import { PlaylistService } from '../shared/playlist.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-files',
@@ -11,33 +13,101 @@ import { PlaylistService } from '../shared/playlist.service';
   imports: [CommonModule, RouterLink],
 })
 export class FilesComponent implements OnInit {
-  musicFiles = [
-    { title: 'Song 1', artist: 'Artist 1', duration: '3:45' },
-    { title: 'Song 2', artist: 'Artist 2', duration: '4:12' },
-  ];
-
-  playlists: any[] = []; // empty array
+  musicFiles: any[] = [];
+  playlists: any[] = [];
   selectedFileForPlaylist: any = null;
+  errorMessage: string | null = null;
 
-  constructor(private router: Router, private playlistService: PlaylistService) {
-    this.playlists = this.playlistService.getPlaylists(); // moved the init
-  }
+  constructor(
+    private router: Router,
+    private fileService: FileService,
+    private playlistService: PlaylistService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit() {
-    // for updating the init
+    this.loadFiles();
+    this.loadPlaylists();
+  }
+
+  loadFiles() {
+    const token = localStorage.getItem('token');
+    this.fileService.getFiles().subscribe({
+      next: (data) => {
+        this.musicFiles = data.map((file: any) => ({
+          id: file.id,
+          name: file.name,
+          title: file.metadata?.title || 'Untitled',
+          artist: file.metadata?.artist || 'Unknown',
+          album: file.metadata?.album || 'Unknown',
+        }));
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to load files: ' + (err.error?.message || err.message);
+        console.error('Failed to load files', err);
+      },
+    });
+  }
+
+  loadPlaylists() {
+    this.playlistService.getPlaylists().subscribe({
+      next: (data) => {
+        this.playlists = data;
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to load playlists: ' + (err.error?.message || err.message);
+        console.error('Failed to load playlists', err);
+      },
+    });
   }
 
   logout() {
+    localStorage.removeItem('token');
     this.router.navigate(['/auth']);
   }
 
   addFile() {
-    const newFile = { title: 'New Song', artist: 'New Artist', duration: '3:00' };
-    this.musicFiles.push(newFile);
+    const token = localStorage.getItem('token');
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'audio/*';
+    input.multiple = true;
+    input.onchange = (event: Event) => {
+      const fileInput = event.target as HTMLInputElement;
+      if (fileInput.files && fileInput.files.length > 0) {
+        const formData = new FormData();
+        const filesArray = Array.from(fileInput.files);
+        filesArray.forEach((file, index) => {
+          formData.append('files', file);
+        });
+
+        this.http.post('http://localhost:3000/track/upload', formData, {
+          headers: { Authorization: `Bearer ${token}` },
+        }).subscribe({
+          next: () => {
+            this.loadFiles();
+            this.router.navigate(['/music-files']);
+          },
+          error: (err) => {
+            this.errorMessage = 'Failed to upload file: ' + (err.error?.message || err.message);
+            console.error('Failed to upload file', err);
+          },
+        });
+      }
+    };
+    input.click();
   }
 
   deleteFile(file: any) {
-    this.musicFiles = this.musicFiles.filter(f => f !== file);
+    const token = localStorage.getItem('token');
+    const trackIds = [file.id];
+    this.fileService.deleteFile(trackIds).subscribe({
+      next: () => this.loadFiles(),
+      error: (err) => {
+        this.errorMessage = 'Failed to delete file: ' + (err.error?.message || err.message);
+        console.error('Failed to delete file', err);
+      },
+    });
   }
 
   showPlaylistSelector(file: any) {
@@ -45,7 +115,15 @@ export class FilesComponent implements OnInit {
   }
 
   addToPlaylist(file: any, playlist: any) {
-    this.playlistService.addFileToPlaylist(playlist, file);
-    this.selectedFileForPlaylist = null;
+    this.playlistService.addFileToPlaylist(playlist.id, file.id).subscribe({
+      next: () => {
+        this.selectedFileForPlaylist = null;
+        this.loadPlaylists();
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to add file to playlist: ' + (err.error?.message || err.message);
+        console.error('Failed to add file to playlist', err);
+      },
+    });
   }
 }

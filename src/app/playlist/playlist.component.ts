@@ -11,27 +11,54 @@ import { PlaylistService } from '../shared/playlist.service';
   imports: [CommonModule, RouterLink],
 })
 export class PlaylistComponent implements OnInit {
-  playlists: any[] = []; // empty array init
+  playlists: any[] = [];
   selectedPlaylist: any = null;
+  errorMessage: string | null = null;
 
-  constructor(private router: Router, private playlistService: PlaylistService) {
-    this.playlists = this.playlistService.getPlaylists(); // move the init here
-  }
+  constructor(private router: Router, private playlistService: PlaylistService) {}
 
   ngOnInit() {
-    //will put here the init
+    this.loadPlaylists();
+  }
+
+  loadPlaylists() {
+    this.playlistService.getPlaylists().subscribe({
+      next: (data) => {
+        this.playlists = data;
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to load playlists: ' + (err.error?.message || err.message);
+        console.error('Failed to load playlists', err);
+      },
+    });
   }
 
   logout() {
+    localStorage.removeItem('token');
     this.router.navigate(['/auth']);
   }
 
   addPlaylist() {
-    this.playlistService.addPlaylist(`Playlist ${this.playlists.length + 1}`);
+    const name = prompt('Enter playlist name');
+    if (name) {
+      this.playlistService.addPlaylist(name).subscribe({
+        next: () => this.loadPlaylists(),
+        error: (err) => {
+          this.errorMessage = 'Failed to add playlist: ' + (err.error?.message || err.message);
+          console.error('Failed to add playlist', err);
+        },
+      });
+    }
   }
 
   deletePlaylist(playlist: any) {
-    this.playlistService.deletePlaylist(playlist);
+    this.playlistService.deletePlaylist(playlist.id).subscribe({
+      next: () => this.loadPlaylists(),
+      error: (err) => {
+        this.errorMessage = 'Failed to delete playlist: ' + (err.error?.message || err.message);
+        console.error('Failed to delete playlist', err);
+      },
+    });
   }
 
   viewPlaylist(playlist: any) {
@@ -39,11 +66,25 @@ export class PlaylistComponent implements OnInit {
   }
 
   addFileToPlaylist() {
-    const newFile = { title: 'New Song', artist: 'New Artist', duration: '3:00' };
-    this.playlistService.addFileToPlaylist(this.selectedPlaylist, newFile);
+    const fileId = prompt('Enter file ID to add');
+    if (fileId) {
+      this.playlistService.addFileToPlaylist(this.selectedPlaylist.id, fileId).subscribe({
+        next: () => this.loadPlaylists(),
+        error: (err) => {
+          this.errorMessage = 'Failed to add file to playlist: ' + (err.error?.message || err.message);
+          console.error('Failed to add file to playlist', err);
+        },
+      });
+    }
   }
 
   removeFileFromPlaylist(file: any) {
-    this.playlistService.removeFileFromPlaylist(this.selectedPlaylist, file);
+    this.playlistService.removeFileFromPlaylist(this.selectedPlaylist.id, file.id).subscribe({
+      next: () => this.loadPlaylists(),
+      error: (err) => {
+        this.errorMessage = 'Failed to remove file from playlist: ' + (err.error?.message || err.message);
+        console.error('Failed to remove file from playlist', err);
+      },
+    });
   }
 }

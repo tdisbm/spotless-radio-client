@@ -14,6 +14,8 @@
         <h1 class="spotless">SPOTLESS <span>RADIO</span></h1>
       </div>
 
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+
       <div class="tables-container">
         <!-- Tabel Now Playing -->
         <div class="small-table">
@@ -27,7 +29,17 @@
         <div class="small-table">
           <div class="table-header">Stream</div>
           <div class="table-content">
-            <p>Local Stream</p>
+            <p>Status: {{ streamStatus }}</p>
+            <select [(ngModel)]="selectedStreamId" name="streamSelect" (change)="updateSelectedStream()">
+              <option value="">Select a stream</option>
+              <option *ngFor="let stream of streams" [value]="stream.id">
+                {{ stream.name }}
+              </option>
+            </select>
+            <button class="action-btn" (click)="startStream()" [disabled]="!selectedStreamId || streamStatus === 'Playing'">Play</button>
+            <button class="action-btn" (click)="pauseStream()" [disabled]="!selectedStreamId || streamStatus !== 'Playing'">Pause</button>
+            <button class="action-btn" (click)="resumeStream()" [disabled]="!selectedStreamId || streamStatus !== 'Paused'">Resume</button>
+            <button class="action-btn" (click)="stopStream()" [disabled]="!selectedStreamId || streamStatus === 'Stopped'">Stop</button>
           </div>
         </div>
 
@@ -36,6 +48,39 @@
           <div class="table-header">Broadcasting Service</div>
           <div class="table-content">
             <p>Ice Cast</p>
+            <p *ngIf="icecastLink">Link: <a [href]="icecastLink" target="_blank">{{ icecastLink }}</a></p>
+          </div>
+        </div>
+
+        <!-- Tabel Create Stream -->
+        <div class="small-table full-width-table">
+          <div class="table-header">Create New Stream</div>
+          <div class="table-content">
+            <input type="text" [(ngModel)]="newStream.name" placeholder="Name" />
+            <input type="text" [(ngModel)]="newStream.host" placeholder="Host" />
+            <input type="number" [(ngModel)]="newStream.port" placeholder="Port" />
+            <input type="text" [(ngModel)]="newStream.endpoint" placeholder="Endpoint" />
+            <input type="text" [(ngModel)]="newStream.username" placeholder="Username" />
+            <input type="password" [(ngModel)]="newStream.password" placeholder="Password" />
+            <input type="text" [(ngModel)]="newStream.playlistId" placeholder="Playlist ID" />
+            <button class="action-btn" (click)="createStream()">Create Stream</button>
+          </div>
+        </div>
+
+        <!-- Tabel Update Stream -->
+        <div class="small-table full-width-table" *ngIf="selectedStream">
+          <div class="table-header">Update Selected Stream</div>
+          <div class="table-content">
+            <input type="text" [(ngModel)]="selectedStream.name" placeholder="Name" />
+            <input type="text" [(ngModel)]="selectedStream.host" placeholder="Host" />
+            <input type="number" [(ngModel)]="selectedStream.port" placeholder="Port" />
+            <input type="text" [(ngModel)]="selectedStream.username" placeholder="Username" />
+            <input type="password" [(ngModel)]="selectedStream.password" placeholder="Password" />
+            <input type="text" [(ngModel)]="selectedStream.playlistId" placeholder="Playlist ID" />
+            <label><input type="checkbox" [(ngModel)]="selectedStream.isRecursive" /> Recursive</label>
+            <label><input type="checkbox" [(ngModel)]="selectedStream.enabled" /> Enabled</label>
+            <button class="action-btn" (click)="updateStream()">Update Stream</button>
+            <button class="action-btn danger" (click)="deleteStream()">Delete Stream</button>
           </div>
         </div>
       </div>
