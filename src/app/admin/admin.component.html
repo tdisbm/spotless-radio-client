@@ -34,7 +34,7 @@
                     (click)="openStreamInNewPage(selectedStreamId)"
                     class="status-chip pointer"
                     style="background-color: darkseagreen">
-                open&nbsp;📻
+                open 📻
               </span>
               <span *ngIf="!isPlaylistPaused(selectedStreamId)" class="status-chip" style="background-color: mediumpurple">
                 playing
@@ -62,6 +62,10 @@
                 🛑
               </button>
             </div>
+            <!-- Iframe pentru player -->
+            <div *ngIf="showPlayer" class="player-container">
+              <iframe [src]="updatePlayerUrl() | safeUrl" width="100%" height="200" frameborder="0" allowfullscreen></iframe>
+            </div>
           </div>
         </div>
 
@@ -75,7 +79,12 @@
             <input type="number" [(ngModel)]="selectedStream.port" placeholder="Port"/>
             <input type="text" [(ngModel)]="selectedStream.username" placeholder="Username"/>
             <input type="password" [(ngModel)]="selectedStream.password" placeholder="Password"/>
-            <input type="text" [(ngModel)]="selectedStream.playlistId" placeholder="Playlist ID"/>
+            <select [(ngModel)]="selectedStream.playlistId">
+              <option value="">Select a playlist</option>
+              <option *ngFor="let playlist of playlists" [value]="playlist.id">
+                {{ playlist.name }}
+              </option>
+            </select>
             <div>
               <label>Recursive</label>
               <input type="checkbox" [(ngModel)]="selectedStream.isRecursive"/>
@@ -100,7 +109,12 @@
             <input type="text" [(ngModel)]="newStream.endpoint" placeholder="Endpoint"/>
             <input type="text" [(ngModel)]="newStream.username" placeholder="Username"/>
             <input type="password" [(ngModel)]="newStream.password" placeholder="Password"/>
-            <input type="text" [(ngModel)]="newStream.playlistId" placeholder="Playlist ID"/>
+            <select [(ngModel)]="newStream.playlistId">
+              <option value="">Select a playlist</option>
+              <option *ngFor="let playlist of playlists" [value]="playlist.id">
+                {{ playlist.name }}
+              </option>
+            </select>
             <button class="action-btn" (click)="createStream()">Create Stream</button>
           </div>
         </div>

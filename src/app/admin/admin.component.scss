@@ -211,5 +211,12 @@
   border-radius: 3px;
   font-size: 12px;
   font-weight: bold;
-  color: white
+  color: white;
+}
+
+.player-container {
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
 }

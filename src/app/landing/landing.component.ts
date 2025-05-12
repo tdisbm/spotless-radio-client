@@ -18,7 +18,7 @@ export class LandingComponent implements OnInit {
   streams: any[] = [];
   selectedStreamId: string | null = null;
   volume: number = 50;
-  audio: HTMLAudioElement | null = null;
+  audio: HTMLAudioElement; // Schimbat la HTMLAudioElement (fără | null)
   icecastLink: string | null = null;
   nowPlaying = { artist: 'Artist', song: 'Song' };
 
@@ -26,12 +26,18 @@ export class LandingComponent implements OnInit {
     private router: Router,
     private feedbackService: FeedbackService,
     private streamService: StreamService
-  ) {}
+  ) {
+    // Inițializare garantată a audio-ului în constructor
+    this.audio = new Audio();
+  }
 
   ngOnInit() {
-    this.loadStreams();
-    this.audio = new Audio();
     this.audio.volume = this.volume / 100;
+    this.audio.addEventListener('error', () => {
+      this.errorMessage = 'Failed to load audio stream';
+      console.error('Audio stream error');
+    });
+    this.loadStreams();
   }
 
   loadStreams() {
@@ -42,8 +48,8 @@ export class LandingComponent implements OnInit {
           this.selectedStreamId = this.streams[0].id;
           this.updateStreamLink();
           this.streamStatus = this.streams[0].enabled ? 'Playing' : 'Stopped';
-          if (this.streamStatus === 'Playing' && this.audio) {
-            this.audio.play();
+          if (this.streamStatus === 'Playing') {
+            this.playAudio();
           }
         }
       },
@@ -57,9 +63,10 @@ export class LandingComponent implements OnInit {
   updateStreamLink() {
     const stream = this.streams.find(s => s.id === this.selectedStreamId);
     if (stream) {
-      this.icecastLink = `http://${stream.host}:${stream.port}/${stream.endpoint}`;
-      if (this.audio) {
-        this.audio.src = this.icecastLink;
+      this.icecastLink = `http://${stream.publicHost || stream.host}:${stream.port}/${stream.endpoint}`;
+      this.audio.src = this.icecastLink;
+      if (this.streamStatus === 'Playing') {
+        this.playAudio();
       }
     }
   }
@@ -67,11 +74,11 @@ export class LandingComponent implements OnInit {
   toggleStream() {
     if (!this.selectedStreamId) return;
 
-    if (this.streamStatus === 'Playing') {
+    if (this.streamStatus === 'Playing' || this.streamStatus === 'Paused') {
       this.streamService.streamAction([this.selectedStreamId], 'pause').subscribe({
         next: () => {
           this.streamStatus = 'Paused';
-          this.audio?.pause();
+          this.audio.pause();
           this.loadStreams();
         },
         error: (err) => {
@@ -83,7 +90,7 @@ export class LandingComponent implements OnInit {
       this.streamService.streamAction([this.selectedStreamId], 'resume').subscribe({
         next: () => {
           this.streamStatus = 'Playing';
-          this.audio?.play();
+          this.playAudio();
           this.loadStreams();
         },
         error: (err) => {
@@ -94,10 +101,15 @@ export class LandingComponent implements OnInit {
     }
   }
 
+  playAudio() {
+    this.audio.play().catch(err => {
+      this.errorMessage = 'Failed to play audio: ' + err.message;
+      console.error('Play error:', err);
+    });
+  }
+
   adjustVolume() {
-    if (this.audio) {
-      this.audio.volume = this.volume / 100;
-    }
+    this.audio.volume = this.volume / 100; // Acum e sigur că audio nu e null
   }
 
   logout() {

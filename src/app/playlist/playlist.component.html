@@ -1,4 +1,4 @@
-<div class="admin-container">
+<div class="playlist-container">
   <div class="sidebar">
     <button class="sidebar-btn" [routerLink]="['/admin']">MANAGE</button>
     <button class="sidebar-btn" [routerLink]="['/music-files']">Music Files</button>
@@ -12,54 +12,29 @@
     <div class="header">
       <h1 class="spotless">SPOTLESS <span>RADIO</span></h1>
     </div>
-    <div class="files-header">
+    <div class="playlists-header">
       <h2>Playlists</h2>
+      <button class="add-btn" (click)="addPlaylist()">Add Playlist</button>
     </div>
-    <div class="files-content">
+    <div class="playlists-content">
       <p *ngIf="errorMessage" style="color: red; text-align: center;">{{ errorMessage }}</p>
-      <button class="add-btn" (click)="addPlaylist()">Add New Playlist</button>
+      <ul class="playlist-list">
+        <li *ngFor="let playlist of playlists" (click)="viewPlaylist(playlist)" class="playlist-item">
+          {{ playlist.name }} ({{ playlist.tracks?.length || 0 }} files)
+          <button class="delete-btn" (click)="deletePlaylist(playlist); $event.stopPropagation()">Delete</button>
+        </li>
+      </ul>
 
-      <!-- playlist table -->
-      <table class="music-table" *ngIf="!selectedPlaylist">
-        <thead>
-        <tr>
-          <th>Playlist Name</th>
-          <th>Number of Files</th>
-          <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let playlist of playlists" (click)="viewPlaylist(playlist)" class="playlist-row">
-          <td>{{ playlist.name }}</td>
-          <td>{{ playlist.tracks?.length || 0 }}</td>
-          <td>
-            <button class="action-btn delete-btn" (click)="deletePlaylist(playlist); $event.stopPropagation()">Delete</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-
-      <!-- playlist content -->
-      <div *ngIf="selectedPlaylist">
-        <button class="back-btn" (click)="selectedPlaylist = null">Back to Playlists</button>
+      <!-- Detalii playlist selectat -->
+      <div class="playlist-details" *ngIf="selectedPlaylist">
         <h3>{{ selectedPlaylist.name }}</h3>
-        <button class="add-btn" (click)="addFileToPlaylist()">Add File</button>
-        <table class="music-table">
-          <thead>
-          <tr>
-            <th>Name</th>
-            <th>Actions</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let track of selectedPlaylist.tracks">
-            <td>{{ track.name }}</td>
-            <td>
-              <button class="action-btn delete-btn" (click)="removeFileFromPlaylist(track)">Remove</button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+        <ul class="track-list">
+          <li *ngFor="let track of selectedPlaylist.tracks">
+            {{ track.name }}
+            <button class="remove-btn" (click)="removeFileFromPlaylist(track)">Remove</button>
+          </li>
+        </ul>
+        <button class="back-btn" (click)="selectedPlaylist = null">Back</button>
       </div>
     </div>
   </div>

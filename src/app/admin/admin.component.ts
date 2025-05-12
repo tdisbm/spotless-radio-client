@@ -4,18 +4,21 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {StreamService} from '../shared/stream.service';
 import {SioClientService} from '../shared/sio-client.service';
+import {PlaylistService} from '../shared/playlist.service';
 import {forkJoin, Subscription} from 'rxjs';
 import {MatIconModule} from '@angular/material/icon';
+import { SafeUrlPipe } from '../shared/safe-url.pipe';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
-  imports: [CommonModule, RouterLink, FormsModule, MatIconModule],
+  imports: [CommonModule, RouterLink, FormsModule, MatIconModule, SafeUrlPipe],
 })
 export class AdminComponent implements OnInit, OnDestroy {
   streams: any[] = [];
+  playlists: any[] = [];
   selectedStreamId: string = '';
   selectedStream: any = null;
   errorMessage: string | null = null;
@@ -33,17 +36,20 @@ export class AdminComponent implements OnInit, OnDestroy {
   playerState: any = {};
   mixerState: any = {};
   micState: any = {};
+  showPlayer: boolean = false; // Adăugat pentru a controla vizibilitatea iframe-ului
 
   sioSubs: Subscription[] = [];
 
   constructor(
     private router: Router,
     private streamService: StreamService,
-    private sioClientService: SioClientService
+    private sioClientService: SioClientService,
+    private playlistService: PlaylistService
   ) {}
 
   ngOnInit() {
     this.loadStreams();
+    this.loadPlaylists();
     this.sioSubs.push(this.sioClientService.streamSubject.subscribe((info) => {
       if (info) {
         this.mixerState[info.streamId] = info.state;
@@ -72,7 +78,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   loadStreams() {
     forkJoin([
       this.streamService.getStats(),
-      this.streamService.getStreams()
+      this.streamService.getStreams(),
     ]).subscribe({
       next: ([stats, streams]) => {
         this.initStats(stats);
@@ -84,6 +90,18 @@ export class AdminComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.errorMessage = 'Failed to load streams: ' + (err.error?.message || err.message);
+      },
+    });
+  }
+
+  loadPlaylists() {
+    this.playlistService.getPlaylists().subscribe({
+      next: (data) => {
+        this.playlists = data;
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to load playlists: ' + (err.error?.message || err.message);
+        console.error('Failed to load playlists', err);
       },
     });
   }
@@ -101,23 +119,27 @@ export class AdminComponent implements OnInit, OnDestroy {
   closeStream() {
     if (this.selectedStreamId) {
       this.sioClientService.closeStream(this.selectedStreamId);
+      this.showPlayer = false; // Ascunde player-ul când stream-ul este închis
     }
   }
 
   togglePlaylist() {
     if (this.selectedStreamId) {
-      const isPaused = this.playerState[this.selectedStreamId]?.isPaused
+      const isPaused = this.playerState[this.selectedStreamId]?.isPaused;
       if (isPaused) {
         this.sioClientService.resumePlaylist(this.selectedStreamId);
+        this.showPlayer = true; // Afișează player-ul când se reia playlist-ul
       } else {
         this.sioClientService.pausePlaylist(this.selectedStreamId);
       }
+      this.updatePlayerUrl(); // Actualizează URL-ul player-ului
     }
   }
 
   stopPlaylist() {
     if (this.selectedStreamId) {
       this.sioClientService.stopPlaylist(this.selectedStreamId);
+      this.showPlayer = false; // Ascunde player-ul când playlist-ul este oprit
     }
   }
 
@@ -153,6 +175,7 @@ export class AdminComponent implements OnInit, OnDestroy {
           this.selectedStreamId = '';
           this.selectedStream = null;
           this.loadStreams();
+          this.showPlayer = false; // Ascunde player-ul când stream-ul este șters
         },
         error: (err) => {
           this.errorMessage = 'Failed to delete stream: ' + (err.error?.message || err.message);
@@ -189,7 +212,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     if (state === undefined) {
       return true;
     }
-    return !!state.isPaused
+    return !!state.isPaused;
   }
 
   initStats(rawStats: any) {
@@ -213,6 +236,16 @@ export class AdminComponent implements OnInit, OnDestroy {
       return currentTrack.name.split('.')[0];
     }
     return 'Unknown';
+  }
+
+  updatePlayerUrl() {
+    if (this.selectedStream && this.showPlayer) {
+      const stream = this.streams.find(s => s.id === this.selectedStreamId);
+      if (stream) {
+        return `http://${stream.publicHost}:${stream.port}/${stream.endpoint}`;
+      }
+    }
+    return '';
   }
 
   openStreamInNewPage(streamId: string) {
