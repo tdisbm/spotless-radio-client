@@ -209,7 +209,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   isPlaylistPaused(streamId: string) {
     const state = this.playerState[streamId];
-    if (state === undefined) {
+    if (state === undefined || state === null) {
       return true;
     }
     return !!state.isPaused;
