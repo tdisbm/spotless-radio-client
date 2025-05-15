@@ -18,7 +18,7 @@ export class LandingComponent implements OnInit {
   streams: any[] = [];
   selectedStreamId: string | null = null;
   volume: number = 50;
-  audio: HTMLAudioElement; // Schimbat la HTMLAudioElement (fără | null)
+  audio: HTMLAudioElement;
   icecastLink: string | null = null;
   nowPlaying = { artist: 'Artist', song: 'Song' };
 
@@ -27,7 +27,6 @@ export class LandingComponent implements OnInit {
     private feedbackService: FeedbackService,
     private streamService: StreamService
   ) {
-    // Inițializare garantată a audio-ului în constructor
     this.audio = new Audio();
   }
 

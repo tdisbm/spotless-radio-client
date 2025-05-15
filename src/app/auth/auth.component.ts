@@ -9,6 +9,20 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 
+function passwordValidator(control: any) {
+  const value = control.value || '';
+  const hasMinLength = value.length >= 12;
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+  if (!hasMinLength && !hasSpecialChar) {
+    return { passwordStrength: { notLongEnough: true, missingSpecialChar: true } };
+  } else if (!hasMinLength) {
+    return { passwordStrength: { notLongEnough: true } };
+  } else if (!hasSpecialChar) {
+    return { passwordStrength: { missingSpecialChar: true } };
+  }
+  return null;
+}
+
 @Component({
   selector: 'app-auth',
   standalone: true,
@@ -38,7 +52,7 @@ export class AuthComponent {
   constructor(private fb: FormBuilder) {
     this.authForm = this.fb.group({
       username: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required]],
       confirmPassword: [''],
       email: ['', [Validators.required, Validators.email]],
     });
@@ -60,9 +74,38 @@ export class AuthComponent {
 
     const { username, password, confirmPassword, email } = this.authForm.value;
 
-    if (!this.isSignIn && password !== confirmPassword) {
-      this.errorMessage = 'Passwords do not match';
-      return;
+    if (!this.isSignIn) {
+      if (password !== confirmPassword) {
+        this.errorMessage = 'Passwords do not match';
+        const passwordErrors = this.authForm.get('password')?.errors;
+        if (passwordErrors?.['passwordStrength']) {
+          const errors = [];
+          if (passwordErrors['passwordStrength']['notLongEnough']) {
+            errors.push('Password must be at least 12 characters');
+          }
+          if (passwordErrors['passwordStrength']['missingSpecialChar']) {
+            errors.push('Password must contain a special character (!@#$%^&*(),.?":{}|<>)');
+          }
+          if (errors.length > 0) {
+            this.errorMessage += '. ' + errors.join(' and ');
+          }
+        }
+        return;
+      }
+      const passwordErrors = this.authForm.get('password')?.errors;
+      if (passwordErrors?.['passwordStrength']) {
+        const errors = [];
+        if (passwordErrors['passwordStrength']['notLongEnough']) {
+          errors.push('Password must be at least 12 characters');
+        }
+        if (passwordErrors['passwordStrength']['missingSpecialChar']) {
+          errors.push('Password must contain a special character (!@#$%^&*(),.?":{}|<>)');
+        }
+        if (errors.length > 0) {
+          this.errorMessage = errors.join(' and ');
+          return;
+        }
+      }
     }
 
     const url = this.isSignIn ? '/auth/sign-in' : '/auth/sign-up';
@@ -75,10 +118,9 @@ export class AuthComponent {
         console.log('Auth response:', response);
         if (response.token) {
           localStorage.setItem('token', response.token);
-          localStorage.setItem('roles', JSON.stringify(response.roles)); // saving roles
+          localStorage.setItem('roles', JSON.stringify(response.roles));
           this.successMessage = 'Authentication successful! Redirecting...';
           setTimeout(() => {
-            // redirect by role
             if (response.roles.includes('ADMIN')) {
               this.router.navigate(['/admin']);
             } else {
@@ -101,11 +143,16 @@ export class AuthComponent {
     if (this.isSignIn) {
       this.authForm.removeControl('confirmPassword');
       this.authForm.removeControl('email');
+      this.authForm.get('password')?.clearValidators();
+      this.authForm.get('password')?.setValidators([Validators.required]);
       this.authForm.get('username')?.setValidators([Validators.required]);
-      this.authForm.get('username')?.updateValueAndValidity();
     } else {
       this.authForm.addControl('confirmPassword', this.fb.control('', [Validators.required]));
       this.authForm.addControl('email', this.fb.control('', [Validators.required, Validators.email]));
+      this.authForm.get('password')?.clearValidators();
+      this.authForm.get('password')?.setValidators([Validators.required, passwordValidator]);
     }
+    this.authForm.get('password')?.updateValueAndValidity();
+    this.authForm.get('username')?.updateValueAndValidity();
   }
 }

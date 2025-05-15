@@ -12,7 +12,10 @@
           <mat-label>Email</mat-label>
           <input matInput type="email" formControlName="email" required />
           <mat-icon matSuffix>email</mat-icon>
-          <mat-error *ngIf="authForm.get('email')?.invalid && authForm.get('email')?.touched">
+          <mat-error *ngIf="authForm.get('email')?.hasError('required') && authForm.get('email')?.touched">
+            Email is required
+          </mat-error>
+          <mat-error *ngIf="authForm.get('email')?.hasError('email') && authForm.get('email')?.touched">
             Please enter a valid email
           </mat-error>
         </mat-form-field>
@@ -21,8 +24,8 @@
           <mat-label>Username</mat-label>
           <input matInput type="text" formControlName="username" required />
           <mat-icon matSuffix>person</mat-icon>
-          <mat-error *ngIf="authForm.get('username')?.invalid && authForm.get('username')?.touched">
-            Please enter a valid username
+          <mat-error *ngIf="authForm.get('username')?.hasError('required') && authForm.get('username')?.touched">
+            Username is required
           </mat-error>
         </mat-form-field>
 
@@ -32,23 +35,23 @@
           <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
-          <mat-error *ngIf="authForm.get('password')?.invalid && authForm.get('password')?.touched">
-            Password must be at least 6 characters
+          <mat-error *ngIf="authForm.get('password')?.hasError('required') && authForm.get('password')?.touched">
+            Password is required
           </mat-error>
         </mat-form-field>
 
         <mat-form-field *ngIf="!isSignIn" appearance="outline" class="full-width">
           <mat-label>Confirm Password</mat-label>
           <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="confirmPassword" required />
-          <mat-error *ngIf="authForm.get('confirmPassword')?.invalid && authForm.get('confirmPassword')?.touched">
-            Passwords must match
+          <mat-error *ngIf="authForm.get('confirmPassword')?.hasError('required') && authForm.get('confirmPassword')?.touched">
+            Confirm Password is required
           </mat-error>
         </mat-form-field>
 
         <p *ngIf="successMessage" style="color: green; text-align: center;">{{ successMessage }}</p>
         <p *ngIf="errorMessage" style="color: red; text-align: center;">{{ errorMessage }}</p>
 
-        <button mat-raised-button color="primary" class="full-width submit-btn" type="submit">
+        <button mat-raised-button color="primary" class="full-width submit-btn" type="submit" [disabled]="isSignIn ? !authForm.get('username')?.valid || !authForm.get('password')?.valid : false">
           {{ isSignIn ? 'Sign In' : 'Sign Up' }}
         </button>
       </form>
