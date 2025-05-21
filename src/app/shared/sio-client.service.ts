@@ -13,7 +13,8 @@ export class SioClientService {
 
   constructor() {
     const authToken: string = localStorage.getItem('token') || '';
-    this.client = io('ws://localhost:3030', {
+    this.client = io('https://localhost', {
+      path: '/stream/socket.io',
       transports: ['websocket', 'polling', 'flashsocket'],
       auth: {
         token: authToken

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class FileService {
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = 'https://localhost/api';
 
   constructor(private http: HttpClient) {}
 

@@ -6,7 +6,7 @@ import {Observable} from 'rxjs';
   providedIn: 'root',
 })
 export class StreamService {
-  private apiUrl = 'http://localhost:3000/stream';
+  private apiUrl = 'https://localhost/api/stream';
 
   constructor(private http: HttpClient) {
   }

@@ -113,7 +113,7 @@ export class AuthComponent {
 
     console.log('Sending auth request:', { url, body });
 
-    this.http.post(`http://localhost:3000${url}`, body).subscribe({
+    this.http.post(`https://localhost/api${url}`, body).subscribe({
       next: (response: any) => {
         console.log('Auth response:', response);
         if (response.token) {

@@ -1,0 +1,12 @@
+{
+  "/stream": {
+    "target": "https://localhost",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/api": {
+    "target": "https://localhost",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

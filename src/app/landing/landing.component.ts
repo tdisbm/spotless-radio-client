@@ -62,7 +62,7 @@ export class LandingComponent implements OnInit {
   updateStreamLink() {
     const stream = this.streams.find(s => s.id === this.selectedStreamId);
     if (stream) {
-      this.icecastLink = `http://${stream.publicHost || stream.host}:${stream.port}/${stream.endpoint}`;
+      this.icecastLink = `https://${stream.publicHost || stream.host}:${stream.port}/${stream.endpoint}`;
       this.audio.src = this.icecastLink;
       if (this.streamStatus === 'Playing') {
         this.playAudio();

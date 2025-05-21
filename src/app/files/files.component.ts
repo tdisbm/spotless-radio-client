@@ -81,7 +81,7 @@ export class FilesComponent implements OnInit {
           formData.append('files', file);
         });
 
-        this.http.post('http://localhost:3000/track/upload', formData, {
+        this.http.post('https://localhost/api/track/upload', formData, {
           headers: { Authorization: `Bearer ${token}` },
         }).subscribe({
           next: () => {
