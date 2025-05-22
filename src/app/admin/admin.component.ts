@@ -242,7 +242,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     if (this.selectedStream && this.showPlayer) {
       const stream = this.streams.find(s => s.id === this.selectedStreamId);
       if (stream) {
-        return `http://${stream.publicHost}:${stream.port}/${stream.endpoint}`;
+        return `http://${stream.publicHost}/live/${stream.endpoint}`;
       }
     }
     return '';
@@ -251,7 +251,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   openStreamInNewPage(streamId: string) {
     for (const stream of this.streams) {
       if (stream.id === streamId) {
-        const link = `http://${stream.publicHost}:${stream.port}/${stream.endpoint}`;
+        const link = `http://${stream.publicHost}/live/${stream.endpoint}`;
         window.open(link, '_blank');
       }
     }
