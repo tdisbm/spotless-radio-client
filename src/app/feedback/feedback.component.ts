@@ -11,7 +11,7 @@ import { FeedbackService } from '../shared/feedback.service';
   imports: [CommonModule, RouterLink],
 })
 export class FeedbackComponent implements OnInit {
-  feedbacks: any[] = [];
+  feedbacks: { user: string; message: string; timestamp: Date }[] = [];
   errorMessage: string | null = null;
 
   constructor(private router: Router, private feedbackService: FeedbackService) {}
@@ -26,7 +26,7 @@ export class FeedbackComponent implements OnInit {
         this.feedbacks = data;
       },
       error: (err) => {
-        this.errorMessage = 'Failed to load feedbacks: ' + (err.error?.message || err.message);
+        this.errorMessage = 'Failed to load feedbacks: ' + err.message;
         console.error('Failed to load feedbacks', err);
       },
     });

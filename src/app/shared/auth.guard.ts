@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot } from '@angular/router';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
   constructor(private router: Router) {}
@@ -17,9 +17,13 @@ export class AuthGuard implements CanActivate {
     const roles = JSON.parse(localStorage.getItem('roles') || '[]') as string[];
     const routeUrl = route.routeConfig?.path || '';
 
-    if (routeUrl === 'admin' && !roles.includes('ADMIN')) {
-      this.router.navigate(['/auth']);
-      return false;
+    const adminRoutes = ['admin', 'feedback', 'music-files', 'playlist'];
+
+    if (adminRoutes.includes(routeUrl)) {
+      if (!roles.includes('ADMIN')) {
+        this.router.navigate(['/radio']);
+        return false;
+      }
     }
 
     return true;

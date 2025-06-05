@@ -1,28 +1,45 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FeedbackService {
-  private apiUrl = 'https://localhost/api/feedback';
+  private feedbacks: { user: string; message: string; timestamp: Date }[] = [];
+  private feedbacksSubject = new BehaviorSubject<
+    { user: string; message: string; timestamp: Date }[]
+  >(this.feedbacks);
 
-  constructor(private http: HttpClient) {}
-
-  getFeedbacks(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/list`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-    });
+  constructor() {
+    const storedFeedbacks = localStorage.getItem('feedbacks');
+    if (storedFeedbacks) {
+      this.feedbacks = JSON.parse(storedFeedbacks).map((fb: any) => ({
+        ...fb,
+        timestamp: new Date(fb.timestamp),
+      }));
+      this.feedbacksSubject.next(this.feedbacks);
+    }
   }
 
-  addFeedback(user: string, message: string): Observable<any> {
-    return this.http.post(
-      `${this.apiUrl}/add`,
-      { user, message },
-      {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+  getFeedbacks(): Observable<{ user: string; message: string; timestamp: Date }[]> {
+    return this.feedbacksSubject.asObservable();
+  }
+
+  addFeedback(user: string, message: string): Observable<void> {
+    return new Observable((observer) => {
+      if (!user || !message) {
+        observer.error(new Error('User și mesaj sunt obligatorii'));
+        return;
       }
-    );
+
+      const feedback = { user, message, timestamp: new Date() };
+      this.feedbacks.push(feedback);
+      this.feedbacksSubject.next(this.feedbacks);
+
+      localStorage.setItem('feedbacks', JSON.stringify(this.feedbacks));
+
+      observer.next();
+      observer.complete();
+    });
   }
 }

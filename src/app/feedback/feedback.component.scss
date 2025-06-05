@@ -92,7 +92,7 @@
   margin-top: 20px;
 }
 
-.feedback-table {
+.music-table {
   width: 100%;
   border-collapse: collapse;
   background: white;
@@ -100,17 +100,17 @@
   overflow: hidden;
 }
 
-.feedback-table th,
-.feedback-table td {
+.music-table th,
+.music-table td {
   padding: 15px;
   text-align: left;
 }
 
-.feedback-table th {
+.music-table th {
   background: #6a0dad;
   color: white;
 }
 
-.feedback-table tr:nth-child(even) {
+.music-table tr:nth-child(even) {
   background: #f9f9f9;
 }

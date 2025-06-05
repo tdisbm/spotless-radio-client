@@ -17,17 +17,19 @@
     </div>
     <div class="files-content">
       <p *ngIf="errorMessage" style="color: red; text-align: center;">{{ errorMessage }}</p>
-      <table class="feedback-table">
+      <table class="music-table">
         <thead>
         <tr>
           <th>User</th>
           <th>Message</th>
+          <th>Time</th> <!-- Opțional, pentru timestamp -->
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let feedback of feedbacks">
           <td>{{ feedback.user }}</td>
           <td>{{ feedback.message }}</td>
+          <td>{{ feedback.timestamp | date:'short' }}</td> <!-- Opțional -->
         </tr>
         </tbody>
       </table>

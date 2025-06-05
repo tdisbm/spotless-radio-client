@@ -5,7 +5,7 @@
       <button class="play-btn-small" (click)="toggleStream()">
         <span class="play-icon">{{ streamStatus === 'Playing' ? '⏸' : '▶' }}</span>
       </button>
-      <span class="song-info">{{ nowPlaying.artist }} - {{ nowPlaying.song }}</span>
+      <span class="song-info">{{ nowPlaying.song }}</span>
       <div class="volume-control">
         <input type="range" [(ngModel)]="volume" min="0" max="100" (input)="adjustVolume()" />
         <span>{{ volume }}%</span>

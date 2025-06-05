@@ -36,7 +36,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   playerState: any = {};
   mixerState: any = {};
   micState: any = {};
-  showPlayer: boolean = false; // Adăugat pentru a controla vizibilitatea iframe-ului
+  showPlayer: boolean = false;
 
   sioSubs: Subscription[] = [];
 
@@ -119,7 +119,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   closeStream() {
     if (this.selectedStreamId) {
       this.sioClientService.closeStream(this.selectedStreamId);
-      this.showPlayer = false; // Ascunde player-ul când stream-ul este închis
+      this.showPlayer = false;
     }
   }
 
@@ -128,18 +128,18 @@ export class AdminComponent implements OnInit, OnDestroy {
       const isPaused = this.playerState[this.selectedStreamId]?.isPaused;
       if (isPaused) {
         this.sioClientService.resumePlaylist(this.selectedStreamId);
-        this.showPlayer = true; // Afișează player-ul când se reia playlist-ul
+        this.showPlayer = true;
       } else {
         this.sioClientService.pausePlaylist(this.selectedStreamId);
       }
-      this.updatePlayerUrl(); // Actualizează URL-ul player-ului
+      this.updatePlayerUrl();
     }
   }
 
   stopPlaylist() {
     if (this.selectedStreamId) {
       this.sioClientService.stopPlaylist(this.selectedStreamId);
-      this.showPlayer = false; // Ascunde player-ul când playlist-ul este oprit
+      this.showPlayer = false;
     }
   }
 
